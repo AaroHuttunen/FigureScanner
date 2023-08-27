@@ -46,8 +46,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#1b1b1b',
   },
-  
-  
   navbar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -64,39 +62,20 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     textAlign: 'center',
   },
-  // Main Menu.
-  mainMenuButton: {
-    backgroundColor: '#D3D3D3',
-    paddingVertical: 30,
-    paddingHorizontal: 30,
-    marginVertical: 10,
-    width: 300,
-    alignItems: 'center',
-  },
-  mainMenuButtonText: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: '#1b1b1b',
-  },
-  mainMenuContainer: {
-    flex: 1,
-    backgroundColor: '#1b1b1b',
-    alignItems: 'center',
-    paddingTop: 20,
-  },
-  logoImage: {
-    width: 300,
-    height: 300,
-    resizeMode: 'contain',
-    margin: 20,
-  },
-  mainMenuButtonContainer: {
-    alignItems: 'center',
-    width: '90%',
-  },
   body: {
     width: '100%',
     padding: 10,
+  },
+  developmentMessageContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  developmentMessageText: {
+    fontSize: 20,
+    color: 'white',
+    textAlign: 'center',
+    paddingHorizontal: 20,
   },
   // Figure Screen.
   figureScreenButton: {
@@ -186,17 +165,6 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     borderWidth: 2,
     borderRadius: 5,
-  },
-  developmentMessageContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  developmentMessageText: {
-    fontSize: 20,
-    color: 'white',
-    textAlign: 'center',
-    paddingHorizontal: 20, // to ensure text doesn't go off screen on small devices
   },
 });
 
