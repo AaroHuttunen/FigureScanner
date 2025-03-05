@@ -1,37 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, View, Text, TextInput, Alert, ScrollView } from 'react-native';
 import NfcManager, {NfcTech, Ndef} from 'react-native-nfc-manager';
-import styles from './Styles.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import styles from '../styles/Styles.js';
+import Button from '../components/Button';
 
-function CustomButton({ title, onPress, color = "#D3D3D3" }) {
-  return (
-    <TouchableOpacity style={[styles.figureScreenButton, {backgroundColor: color}]} onPress={onPress}>
-      <Text style={styles.buttonText}>{title}</Text>
-    </TouchableOpacity>
-  );
-}
+function FigureScreen({ navigation, route }) {
+  const { figure } = route.params || {};
 
-function ScanButton({ title, onPress, color = "#D3D3D3" }) {
-  return (
-    <TouchableOpacity style={[styles.scanButton, {backgroundColor: color}]} onPress={onPress}>
-      <Text style={styles.scanButtonText}>{title}</Text>
-    </TouchableOpacity>
-  );
-}
-
-function InputButton({ title, onPress, color = "#D3D3D3" }) {
-  return (
-    <TouchableOpacity style={[styles.inputButton, {backgroundColor: color}]} onPress={onPress}>
-      <Text style={styles.inputButtonText}>{title}</Text>
-    </TouchableOpacity>
-  );
-}
-
-function FigureScreen({ navigation }) {
+  useEffect(() => {
+    if (figure) {
+      setName(figure.name);
+      setStats(figure.stats);
+    }
+  }, [figure]);
+  
   const [name, setName] = useState('Figure Name');
   const [isEditing, setIsEditing] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [newStat, setNewStat] = useState({ name: '', value: '' });
+
+  // For saving figures.
+  async function saveFigure() {
+    const figure = { name, stats };
+  
+    try {
+      // Retrieve current figures
+      const savedFigures = await AsyncStorage.getItem('figures');
+      const figures = savedFigures ? JSON.parse(savedFigures) : [];
+  
+      // Check if figure already exists (based on unique name, for example)
+      const figureExists = figures.some((fig) => fig.name === figure.name);
+      if (!figureExists) {
+        // Add the new figure and save
+        const newFigures = [...figures, figure];
+        await AsyncStorage.setItem('figures', JSON.stringify(newFigures));
+        Alert.alert("Figure saved.");
+      } else {
+        // Optional: handle updating or notifying the user that it exists
+        Alert.alert("Figure already exists!", "This figure has already been saved.");
+      }
+    } catch (error) {
+      console.error("Failed to save figure", error);
+    }
+  }
   
   // Initialize stats state as an empty array
   const [stats, setStats] = useState([]);
@@ -162,8 +174,8 @@ function FigureScreen({ navigation }) {
             maxLength={3}
           />
           <View style={styles.buttonGroup}>
-            <CustomButton title="Save" onPress={saveStat} />
-            {editIndex !== null && <CustomButton title="Delete" onPress={() => { removeStat(editIndex); setIsEditing(false); }} />}
+            <Button title="Save" onPress={saveStat} />
+            {editIndex !== null && <Button title="Delete" onPress={() => { removeStat(editIndex); setIsEditing(false); }} />}
           </View>
         </View>
       ) : (
@@ -189,11 +201,11 @@ function FigureScreen({ navigation }) {
           </View>
           {selectedStatIndex !== null && !isEditing && (
             <View style={styles.inputButtonsContainer}>
-              <View style={styles.inputButtons}>
-                <InputButton title="+" onPress={() => incrementStat(selectedStatIndex)} />
-                <InputButton title="-" onPress={() => decrementStat(selectedStatIndex)} />
-                <InputButton title="Edit" onPress={() => { startEditing(selectedStatIndex); setSelectedStatIndex(null); }} />
-              </View>
+                <View style={styles.buttonRow}>
+                  <Button style={styles.inputButton} textStyle={styles.inputButtonText} title="+" onPress={() => incrementStat(selectedStatIndex)} />
+                  <Button style={styles.inputButton} textStyle={styles.inputButtonText} title="-" onPress={() => decrementStat(selectedStatIndex)} />
+                </View>
+              <Button style={styles.inputButton} textStyle={styles.inputButtonText} title="Edit" onPress={() => { startEditing(selectedStatIndex); setSelectedStatIndex(null); }} />
             </View>
           )}
         </ScrollView>
@@ -203,17 +215,22 @@ function FigureScreen({ navigation }) {
 
       {selectedStatIndex === null && !isEditing &&(
         <View style={styles.buttonGroup}>
-          <ScanButton title="Scan tag" onPress={scanTag} />
-          <ScanButton title="Write tag" onPress={writeTag} />
-          <ScanButton title="Add new stat" onPress={() => { setIsEditing(true); setEditIndex(null); }} />
+          <View style={styles.buttonRow}>
+            <Button style={styles.scanButton} textStyle={styles.scanButtonText} title="Scan tag" onPress={scanTag} />
+            <Button style={styles.scanButton} textStyle={styles.scanButtonText} title="Write tag" onPress={writeTag} />
+          </View>
+          <View style={styles.buttonRow}>
+            <Button style={styles.scanButton} textStyle={styles.scanButtonText} title="Add new stat" onPress={() => { setIsEditing(true); setEditIndex(null); }} />
+            <Button style={styles.scanButton} textStyle={styles.scanButtonText} title="Save Figure" onPress={saveFigure} />
+          </View>
         </View>
       )}
 
       {!isEditing && (
         <View style={styles.navbar}>
-          <CustomButton title="Home" onPress={() => navigation.navigate('Home')} />
-          <CustomButton title="Figurelist" onPress={() => navigation.navigate('FigureList')} />
-          <CustomButton title="Figure templates" onPress={() => navigation.navigate('FigureTemplate')} />
+          <Button title="Home" onPress={() => navigation.navigate('Home')} />
+          <Button title="Figurelist" onPress={() => navigation.navigate('FigureList')} />
+          <Button title="Figure templates" onPress={() => navigation.navigate('FigureTemplate')} />
         </View>
       )}
     </View>

@@ -2,21 +2,14 @@ import React from 'react';
 import { Image, TouchableOpacity, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import FigureTemplateScreen from './components/FigureTemplateScreen';
-import FigureListScreen from './components/FigureListScreen';
-import FigureScreen from './components/FigureScreen';
-import styles  from './components/Styles.js';
+import FigureTemplateScreen from '../screens/FigureTemplateScreen';
+import FigureListScreen from '../screens/FigureListScreen';
+import FigureScreen from '../screens/FigureScreen';
+import styles  from '../styles/Styles.js';
+import Button  from '../components/Button.js';
 
 const Stack = createStackNavigator();
-const logo = require('./images/logo.jpg');
-
-function CustomButton({ title, onPress }) {
-  return (
-    <TouchableOpacity style={styles.mainMenuButton} onPress={onPress}>
-      <Text style={styles.mainMenuButtonText}>{title}</Text>
-    </TouchableOpacity>
-  );
-}
+const logo = require('../images/logo.jpg');
 
 function HomeScreen({ navigation }) {
   return (
@@ -25,10 +18,10 @@ function HomeScreen({ navigation }) {
         <Text style={styles.appName}>Figure Scanner</Text>
       </View>
       <Image source={logo} style={styles.logoImage} />
-      <View style={styles.mainMenuButtonContainer}>
-        <CustomButton title="Scan Figure" onPress={() => navigation.navigate('ScanFigure')} />
-        <CustomButton title="Figure List" onPress={() => navigation.navigate('FigureList')} />
-        <CustomButton title="Figure templates" onPress={() => navigation.navigate('FigureTemplate')} />
+      <View>
+        <Button style={styles.mainMenuButton} textStyle={styles.mainMenuButtonText} title="Scan Figure" onPress={() => navigation.navigate('ScanFigure')} />
+        <Button style={styles.mainMenuButton} textStyle={styles.mainMenuButtonText} title="Figure List" onPress={() => navigation.navigate('FigureList')} />
+        <Button style={styles.mainMenuButton} textStyle={styles.mainMenuButtonText} title="Figure templates" onPress={() => navigation.navigate('FigureTemplate')} />
       </View>
     </View>
   );
